@@ -2,21 +2,35 @@
 # -*- coding: utf-8 -*-
 
 from takahe import takahe
+import spacy
 
 ################################################################################
-sentences = [
-    "The/DT wife/NN of/IN a/DT former/JJ U.S./NNP president/NN \
-Bill/NNP Clinton/NNP Hillary/NNP Clinton/NNP visited/VBD China/NNP last/JJ \
-Monday/NNP ./PUNCT",
-    "Hillary/NNP Clinton/NNP wanted/VBD to/TO visit/VB China/NNP \
-last/JJ month/NN but/CC postponed/VBD her/PRP$ plans/NNS till/IN Monday/NNP \
-last/JJ week/NN ./PUNCT",
-    "Hillary/NNP Clinton/NNP paid/VBD a/DT visit/NN to/TO \
-the/DT People/NNP Republic/NNP of/IN China/NNP on/IN Monday/NNP ./PUNCT",
-    "Last/JJ week/NN the/DT Secretary/NNP of/IN State/NNP Ms./NNP Clinton/NNP \
-visited/VBD Chinese/JJ officials/NNS ./PUNCT"
+raw_sentences = [
+    "The wife of a former U.S. president Bill \
+Clinton Hillary Clinton visited China last Monday.",
+    "Hillary Clinton wanted to visit China \
+last month but postponed her plans till Monday \
+last week.", "Hillary Clinton paid a visit to \
+the People Republic of China on Monday.",
+    "Last week the Secretary of State Ms. Clinton \
+visited Chinese officials."
 ]
 ################################################################################
+
+nlp = spacy.load('en')
+sentences = [nlp(s) for s in raw_sentences]
+
+
+def token_to_tagged(token):
+    if token.pos_ == 'PUNCT':
+        return f"{token.text}/{token.pos_}"
+    return f"{token.text}/{token.tag_}"
+
+
+sentences = [
+    ' '.join([token_to_tagged(token) for token in sent]) for sent in sentences
+]
+print(sentences)
 
 # Create a word graph from the set of sentences with parameters :
 # - minimal number of words in the compression : 6
